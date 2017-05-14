@@ -22,7 +22,9 @@ Plugin 'airblade/vim-gitgutter'
 Plugin 'pangloss/vim-javascript'
 Plugin 'mxw/vim-jsx'
 Plugin 'feix760/autospace.vim'
-
+Plugin 'maksimr/vim-jsbeautify'
+Plugin 'tpope/vim-fugitive'
+Plugin 'junegunn/fzf'
 " All of your Plugins must be added before the following line
  call vundle#end()            " required
  filetype plugin indent on    " required
@@ -49,7 +51,6 @@ nnoremap <F7> :Ack
 
 " vim-javascript
 let g:javascript_plugin_jsdoc = 1
-let g:javascript_conceal_return = "⇚"
 
 set conceallevel=1
 
@@ -104,3 +105,6 @@ let g:NERDTreeWinPos = 'right'
 " NERDcommenter
 " Add spaces after comment delimiters by default
 let g:NERDSpaceDelims = 1
+
+autocmd FileType javascript set formatprg=prettier\ --single-quote\ --no-semi\ --stdin
+" autocmd BufWritePre *.js exe "normal! gggqG\<C-o>\<C-o>"

@@ -6,7 +6,7 @@ filetype off                  " required
 filetype plugin indent on    " required
 
 let g:python2_host_prog = '/usr/local/bin/python'
-let g:python3_host_prog = '/usr/local/bin/python3'
+let g:python3_host_prog = '/anaconda3/bin/python'
 
 call plug#begin('~/.nvim/plugged')
 Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -15,7 +15,6 @@ Plug 'ternjs/tern_for_vim'
 Plug 'scrooloose/nerdtree'
 Plug 'scrooloose/nerdcommenter'
 Plug 'elzr/vim-json'
-Plug 'vim-syntastic/syntastic'
 Plug 'Raimondi/delimitMate'
 Plug 'mileszs/ack.vim'
 Plug 'heavenshell/vim-jsdoc'
@@ -31,13 +30,38 @@ Plug 'alvan/vim-closetag'
 Plug 'prettier/vim-prettier', {
   \ 'do': 'yarn install',
   \ 'for': ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql'] }
-Plug 'Valloric/MatchTagAlways'
-
+Plug 'albertorestifo/github.vim'
+Plug 'ctrlpvim/ctrlp.vim'
+Plug 'neomake/neomake'
+Plug 'benjie/neomake-local-eslint.vim'
+Plug 'zchee/deoplete-jedi'
 call plug#end()
 
+" neomake
+let g:neomake_open_list=2
+
+let g:neomake_javascript_enabled_makers = ['eslint']
+let g:neomake_javascript_jsx_enabled_makers = ['eslint']
+let g:neomake_jsx_enabled_makers = ['eslint']
+let g:neomake_list_height=10
+
+if findfile('.eslintrc.json', '.;') !=# ''
+  " let g:neomake_javascript_enabled_makers = ['eslint']
+  " let g:neomake_jsx_enabled_makers = ['eslint']
+  let g:neomake_javascript_eslint_exe = $PWD .'/node_modules/.bin/eslint'
+
+  let g:neomake_javascript_eslint_args = ['--ignore-pattern', '!.eslintrc.*', '-f', 'compact']
+endif
+
+au BufReadPost * Neomake
+au BufWritePost * Neomake
+
+" When writing a buffer, and on normal mode changes (after 750ms).
+call neomake#configure#automake('nw', 100)
+
 let g:prettier#config#semi='false'
-
-
+let g:prettier#config#parser = 'babylon'
+let g:prettier#config#single_quote = 'true'
 
 let g:mta_filetypes = {
     \ 'html': 1,
@@ -46,9 +70,19 @@ let g:mta_filetypes = {
     \}
 
 let g:deoplete#enable_at_startup = 1
+let g:deoplete#sources#ternjs#timeout = 1
+
+let g:deoplete#sources#ternjs#types = 1
+let g:deoplete#sources#ternjs#docs = 1
+
+inoremap <expr><Down>    pumvisible() ?   "\<C-n>"  : "\<Down>"
+inoremap <expr><Up>    pumvisible() ?   "\<C-p>"  : "\<Up>"
+
+
+let g:tern#command = ["tern"]
+let g:tern#arguments = ["--persistent"]
 let g:tern_request_timeout = 1
 
-set tabstop=4 softtabstop=0 expandtab shiftwidth=2 smarttab
 
 syntax on
 set incsearch
@@ -92,17 +126,10 @@ autocmd InsertLeave * match ExtraWhitespace /\S\zs\s\+$/
 " set statusline+=%#warningmsg#
 " set statusline+=%{SyntasticStatuslineFlag()}
 " set statusline+=%*
-let g:syntastic_always_populate_loc_list = 1
-let g:syntastic_loc_list_height = 5
-let g:syntastic_auto_loc_list = 0
-let g:syntastic_check_on_open = 1
-let g:syntastic_check_on_wq = 0
-let g:syntastic_javascript_checkers = ['eslint']
-
-let g:syntastic_error_symbol = '❌'
-let g:syntastic_style_error_symbol = '⁉️'
-let g:syntastic_warning_symbol = '⚠️'
-let g:syntastic_style_warning_symbol = '💩'
+"
+"
+"
+"
 
 let g:closetag_xhtml_filenames = '*.xhtml,*.jsx,*.js'
 let g:jsx_ext_required = 0
@@ -160,7 +187,7 @@ inoremap <expr><TAB>  pumvisible() ? "\<C-n>" : "\<TAB>"
 autocmd FileType css setlocal omnifunc=csscomplete#CompleteCSS
 autocmd FileType html,markdown setlocal omnifunc=htmlcomplete#CompleteTags
 autocmd FileType javascript setlocal omnifunc=javascriptcomplete#CompleteJS
-autocmd FileType python setlocal omnifunc=pythoncomplete#Complete
+autocmd FileType python setlocal omnifunc=pythoncomplete#Complete tabstop=4 shiftwidth=4 softtabstop=4 expandtab smarttab
 autocmd FileType xml setlocal omnifunc=xmlcomplete#CompleteTags
 
 " For perlomni.vim setting.
@@ -170,3 +197,8 @@ autocmd FileType javascript setlocal omnifunc=tern#Complete
 
 
 let g:formatter_yapf_style = 'eslint'
+let g:ctrlp_map = '<c-p>'
+let g:ctrlp_cmd = 'CtrlP'
+let g:ctrlp_custom_ignore = 'node_modules\|DS_Store\|git'
+
+set tabstop=2 softtabstop=4 expandtab shiftwidth=2 smarttab
